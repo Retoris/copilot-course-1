@@ -38,6 +38,21 @@
           <button type="submit">Sign Up</button>
         </form>
         <div id="message" class="hidden"></div>
+        <form id="unsign-form">
+          <h3>Unsign from an Activity</h3>
+          <div class="form-group">
+            <label for="unsign-email">Student Email:</label>
+            <input type="email" id="unsign-email" required placeholder="your-email@mergington.edu" />
+          </div>
+          <div class="form-group">
+            <label for="unsign-activity">Select Activity:</label>
+            <select id="unsign-activity" required>
+              <option value="">-- Select an activity --</option>
+              <!-- Activity options will be loaded here -->
+            </select>
+          </div>
+          <button type="submit">Unsign</button>
+        </form>
       </section>
     </main>
 

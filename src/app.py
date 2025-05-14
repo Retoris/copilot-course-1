@@ -105,4 +105,22 @@ def signup_for_activity(activity_name: str, email: str):
     # Add student
     activity["participants"].append(email)
     return {"message": f"Signed up {email} for {activity_name}"}
-    
+
+
+@app.post("/activities/{activity_name}/unsign")
+def unsign_from_activity(activity_name: str, email: str):
+    """Unsign a student from an activity"""
+    # Validate activity exists
+    if activity_name not in activities:
+        raise HTTPException(status_code=404, detail="Activity not found")
+
+    # Get the specific activity
+    activity = activities[activity_name]
+
+    # Check if the student's email is in the list
+    if email not in activity["participants"]:
+        raise HTTPException(status_code=400, detail="Not signed up for this activity")
+
+    # Remove student
+    activity["participants"].remove(email)
+    return {"message": f"Unsign successful for {email} from {activity_name}"}

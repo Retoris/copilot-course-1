@@ -3,6 +3,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const activitySelect = document.getElementById("activity");
   const signupForm = document.getElementById("signup-form");
   const messageDiv = document.getElementById("message");
+  const unsignForm = document.getElementById("unsign-form");
+  const unsignActivitySelect = document.getElementById("unsign-activity");
 
   // Function to fetch activities from API
   async function fetchActivities() {
@@ -47,6 +49,23 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // Populate unsign activity dropdown
+  async function populateUnsignDropdown() {
+    try {
+      const response = await fetch("/activities");
+      const activities = await response.json();
+
+      Object.keys(activities).forEach((name) => {
+        const option = document.createElement("option");
+        option.value = name;
+        option.textContent = name;
+        unsignActivitySelect.appendChild(option);
+      });
+    } catch (error) {
+      console.error("Error populating unsign dropdown:", error);
+    }
+  }
+
   // Handle form submission
   signupForm.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -87,6 +106,47 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // Handle unsign form submission
+  unsignForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const email = document.getElementById("unsign-email").value;
+    const activity = document.getElementById("unsign-activity").value;
+
+    try {
+      const response = await fetch(
+        `/activities/${encodeURIComponent(activity)}/unsign?email=${encodeURIComponent(email)}`,
+        {
+          method: "POST",
+        }
+      );
+
+      const result = await response.json();
+
+      if (response.ok) {
+        messageDiv.textContent = result.message;
+        messageDiv.className = "success";
+        unsignForm.reset();
+      } else {
+        messageDiv.textContent = result.detail || "An error occurred";
+        messageDiv.className = "error";
+      }
+
+      messageDiv.classList.remove("hidden");
+
+      // Hide message after 5 seconds
+      setTimeout(() => {
+        messageDiv.classList.add("hidden");
+      }, 5000);
+    } catch (error) {
+      messageDiv.textContent = "Failed to unsign. Please try again.";
+      messageDiv.className = "error";
+      messageDiv.classList.remove("hidden");
+      console.error("Error unsigning:", error);
+    }
+  });
+
   // Initialize app
   fetchActivities();
+  populateUnsignDropdown();
 });
